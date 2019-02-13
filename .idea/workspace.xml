@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="129bd74f-ca14-40dc-9cf2-38e866c55051" name="Default Changelist" comment="" />
+    <list default="true" id="129bd74f-ca14-40dc-9cf2-38e866c55051" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -43,10 +45,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
-              <caret line="15" selection-start-line="15" selection-end-line="15" />
+            <state relative-caret-position="62">
+              <caret line="7" column="34" selection-start-line="7" selection-start-column="34" selection-end-line="7" selection-end-column="34" />
               <folding>
-                <marker date="1550093743703" expanded="true" signature="2103:2682" ph="..." />
+                <marker date="1550094102588" expanded="true" signature="2100:2679" ph="..." />
               </folding>
             </state>
           </provider>
@@ -62,6 +64,9 @@
       <find>console.log</find>
       <find>conso</find>
     </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -79,6 +84,7 @@
     <option name="width" value="1680" />
     <option name="height" value="1027" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -126,12 +132,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1549930501290</updated>
-      <workItem from="1549930502949" duration="9169000" />
+      <workItem from="1549930502949" duration="9452000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="9169000" />
+    <option name="totallyTimeSpent" value="9452000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="961" y="23" width="1680" height="1027" extended-state="0" />
@@ -184,10 +190,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="15" selection-start-line="15" selection-end-line="15" />
+        <state relative-caret-position="62">
+          <caret line="7" column="34" selection-start-line="7" selection-start-column="34" selection-end-line="7" selection-end-column="34" />
           <folding>
-            <marker date="1550093743703" expanded="true" signature="2103:2682" ph="..." />
+            <marker date="1550094102588" expanded="true" signature="2100:2679" ph="..." />
           </folding>
         </state>
       </provider>

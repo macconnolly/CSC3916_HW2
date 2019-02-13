@@ -7,9 +7,6 @@ let authJwtController = require('./auth_jwt');
 db = require('./db')();
 let jwt = require('jsonwebtoken');
 
-
-
-
 var app = express();
 app.use(bodyParser.json());
 // Permit the app to parse application/x-www-form-urlencoded
