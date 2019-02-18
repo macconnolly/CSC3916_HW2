@@ -1,42 +1,34 @@
-var express = require('express');
-var http = require('http');
-var bodyParser = require('body-parser');
-var passport = require('passport');
-var authController = require('./auth');
-var authJwtController = require('./auth_jwt');
-db = require('./db')(); //global hack
-var jwt = require('jsonwebtoken');
-var url = require('url');
-
-require('dotenv').config();
+let express = require('express');
+let http = require ('http');
+let bodyParser = require('body-parser');
+let passport = require('passport');
+let authController = require('./auth');
+let authJwtController = require('./auth_jwt');
+db = require('./db')();
+let jwt = require('jsonwebtoken');
 
 var app = express();
 app.use(bodyParser.json());
+// Permit the app to parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
-
 app.use(passport.initialize());
 
-var router = express.Router();
-
-function getJSONObject(req) {
-    var json = {
-        headers : "No Headers",
-        key: process.env.UNIQUE_KEY,
-        body : "No Body"
-    };
-
-    if (req.body != null) {
-        json.body = req.body;
-    }
-    if (req.headers != null) {
-        json.headers = req.headers;
-    }
-
-    return json;
-}
+let router = express.Router();
 
 router.route('/post')
-    .post(authJwtController.isAuthenticated, (req, res) => {
+    .post(authController.isAuthenticated, function(req, res){
+        // console.log(req.body);
+        res = res.status(200);
+        if (req.get('Content-Type')) {
+            console.log("Content-Type: " + req.get('Content-Type'));
+            res = res.type(req.get('Content-Type'));
+        }
+        res.send(req.body)
+    });
+
+
+router.route('/post')
+    .post(authController.isAuthenticated, function (req, res) {
             console.log(req.body);
             res = res.status(200);
             if (req.get('Content-Type')) {
@@ -46,33 +38,20 @@ router.route('/post')
             var o = getJSONObject(req);
             res.json(o);
         }
-
     );
 
-router.route('/postjwt')
-    .post(authJwtController.isAuthenticated, (req, res) => {
-            // console.log(req.body);
-            res = res.status(200);
-            if (req.get('Content-Type')) {
-                console.log("Content-Type: " + req.get('Content-Type'));
-                res = res.type(req.get('Content-Type'));
-            }
-            res.send(req.body);
-        }
-
-    )
 
 
 
-router.route('/signup')
-    .post((req, res) => {
+
+router.post('/signup', function(req, res) {
+    console.log('signup started');
+    console.log(req.route.method);
+    if (req.route.method === 'post') {
+
 
         if (!req.body.username || !req.body.password) {
-            res.json(
-                {
-                    success: false,
-                    msg: 'Please pass username and password.'
-                });
+            res.json({success: false, msg: 'Please pass username and password.'});
         } else {
             var newUser = {
                 username: req.body.username,
@@ -80,127 +59,71 @@ router.route('/signup')
             };
             // save the user
             db.save(newUser); //no duplicate checking
-            res.json(
-                {
-                    success: true,
-                    msg: 'Successfully created new user.'});
-        }
-    })
+            res.json({success: true, msg: 'Successfully created new user.'});
 
-    .all((req, res) => {
-        res.status(405)
-            .send(
-                {
-                    Error: 'Unsupported HTTP method',
-                    msg: 'This route only supports a post request'
-                });
-    });
+        };
+
+    } else {
+
+        res.send(405, 'Method Not Allowed');
+    }
 
 
-router.route('/signin')
-    .post((req, res) => {
-        console.log(process.env.UNIQUE_KEY);
-        var user = db.findOne(req.body.username);
+});
 
-        if (!user) {
-            res.status(401).send(
-                {
-                    success: false,
-                    msg: 'Authentication failed. User not found.'
-                });
+router.post('/signin', function (req, res) {
+    let user = db.findOne(req.body.username);
+    // console.log('Finding: ' + req.body.username);
+    // console.log('Perform the actual find ' + db.findOne(req.body.username));
+    // console.log(user);
+
+    if (!user) {
+        res.status(401).send({success: false, msg: 'Authentication failed. User not found.'});
+    }
+    else {
+        if(req.body.password == user.password) {
+            let userToken = {id: user.id, username: user.username };
+            let token = jwt.sign(userToken, authJwtController.secret);
+            res.json({success: true, token: 'JWT ' + token})
         }
         else {
-            // check if password matches
-            if (req.body.password == user.password)  {
-                var userToken = { id : user.id, username: user.username };
-                var token = jwt.sign(userToken, process.env.UNIQUE_KEY);
-                res.json({success: true, token: 'JWT ' + token});
-            }
-            else {
-                res.status(401).send(
-                    {
-                        success: false,
-                        msg: 'Authentication failed. Wrong password.'
-                    });
-            }
+            res.status(401).send({success: false, msg: 'Authentication failed. Wrong password'});
         }
-    })
-    .all((req, res) => {
-        res = res.status(405);
-        res.json(
-            {
-                Error: 'Unsupported HTTP method',
-                msg: 'This route only supports a post request'
-            }).send();
-    });
+    }
+});
+
+// router.route('/post')
+//     .post(authController.isAuthenticated, function (req, res) {
+//         if(!req.body.username || !req.body.password){
+//             res.json({success: false, msg: 'Please pass both username and password.'});
+//         }
+//         else {
+//             let newUser = {
+//                 username: req.body.username,
+//                 password: req.body.password
+//             };
+//
+//             // Save User
+//             db.save(newUser);
+//             res.json({success: true, msg: 'Sucussfully created new user.'});
+//         }
+//     });
 
 
-router.route('/movies')
-    .get((req, res) => {
-        res.set(req.headers);
-        res.status(200);
-        res.query = req.query;
-        res = res.json(
-            {
-                status: 200,
-                env: process.env.UNIQUE_KEY,
-                message: 'GET movies',
-                query: req.query,
-                headers: req.headers
-            }).send();
 
-    })
-    .post((req, res) => {
 
-        res.set(req.headers);
-        res.status(200);
-        res.query = req.query;
-        res = res.json(
-            {
-                status: 200,
-                env: process.env.UNIQUE_KEY,
-                message: 'Movie Saved',
-                query: req.query,
-                headers: req.headers
-            }).send();
-
-    })
-
-    .put(authJwtController.isAuthenticated, (req, res) => {
+router.route('/postjwt')
+    .post(authJwtController.isAuthenticated, function(req, res){
+       // console.log(req.body);
         res = res.status(200);
-        res.send(req.body);
-        // res.set(req.headers);
-        // res.status(200);
-        // res.query = req.query;
-        // res = res.json(
-        //     {
-        //         status: 200,
-        //         env: process.env.UNIQUE_KEY,
-        //         message: 'GET movies',
-        //         query: req.query,
-        //         headers: req.headers
-        //     }).send();
-        //
-
-        // res.json({
-        //     msg: 'success'
-        // }).send();
-
-
-    })
-
-    .all((req, res) => {
-        res = res.status(200);
-        res.json(
-            {
-                Error: 'Unsupported HTTP method',
-                msg: 'This route only supports a post request'
-            }).send();
+        if (req.get('Content-Type')) {
+            // console.log("Content-Type: " + req.get('Content-Type'));
+            res= res.type(req.get('Content-Type'));
+        }
+        res.send(req.body)
     });
-
-
 
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 
-module.exports = app; // for testing
+

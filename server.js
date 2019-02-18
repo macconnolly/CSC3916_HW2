@@ -35,6 +35,18 @@ function getJSONObject(req) {
     return json;
 }
 
+
+router.route('/')
+    .all((req, res) => {
+            res.status(403);
+            res.json({
+                Error: 'Forbidden',
+                Message: 'Access to this resource is not allowed.'
+            }).send();
+        }
+
+    );
+
 router.route('/post')
      .post(authJwtController.isAuthenticated, (req, res) => {
             console.log(req.body);
@@ -91,8 +103,8 @@ router.route('/signup')
         res.status(405)
             .send(
                 {
-                    Error: 'Unsupported HTTP method',
-                    msg: 'This route only supports a post request'
+                    Error: 'Method Not Allowed ',
+                    Message: 'Unsupported HTTP Method'
                 });
     });
 
@@ -129,8 +141,8 @@ router.route('/signin')
         res = res.status(405);
         res.json(
             {
-                Error: 'Unsupported HTTP method',
-                msg: 'This route only supports a post request'
+                Error: 'Method Not Allowed ',
+                Message: 'Unsupported HTTP Method'
             }).send();
     });
 
@@ -142,7 +154,6 @@ router.route('/movies')
         res.query = req.query;
         res = res.json(
             {
-                status: 200,
                 env: process.env.UNIQUE_KEY,
                 message: 'GET movies',
                 query: req.query,
@@ -157,7 +168,6 @@ router.route('/movies')
         res.query = req.query;
         res = res.json(
             {
-                status: 200,
                 env: process.env.UNIQUE_KEY,
                 message: 'Movie Saved',
                 query: req.query,
@@ -167,34 +177,41 @@ router.route('/movies')
     })
 
     .put(authJwtController.isAuthenticated, (req, res) => {
-        res = res.status(200);
-        res.send(req.body);
-        // res.set(req.headers);
-        // res.status(200);
-        // res.query = req.query;
-        // res = res.json(
-        //     {
-        //         status: 200,
-        //         env: process.env.UNIQUE_KEY,
-        //         message: 'GET movies',
-        //         query: req.query,
-        //         headers: req.headers
-        //     }).send();
-        //
 
-        // res.json({
-        //     msg: 'success'
-        // }).send();
 
+        res.set(req.headers);
+        res.status(200);
+        res.query = req.query;
+        res = res.json(
+            {
+                env: process.env.UNIQUE_KEY,
+                message: 'GET movies',
+                query: req.query,
+                headers: req.headers
+            }).send();
 
     })
 
+    .delete(authController.isAuthenticated, (req, res) => {
+
+        res.set(req.headers);
+        res.query = req.query;
+        res = res.json(
+            {
+                status: 200,
+                env: process.env.UNIQUE_KEY,
+                message: 'Movie Deleted',
+                query: req.query,
+                headers: req.headers
+            }).send();
+    })
+
     .all((req, res) => {
-        res = res.status(200);
+        res.status(405);
         res.json(
             {
-                Error: 'Unsupported HTTP method',
-                msg: 'This route only supports a post request'
+                Error: 'Method Not Allowed ',
+                Message: 'Unsupported HTTP Method'
             }).send();
     });
 
