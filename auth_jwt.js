@@ -2,11 +2,12 @@
 var passport = require('passport');
 var JwtStrategy = require('passport-jwt').Strategy;
 var ExtractJwt = require('passport-jwt').ExtractJwt;
+require('dotenv').config();
 
 var opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("jwt");
-// opts.secretOrKey = process.env.SECRET_KEY;
-opts.secretOrKey = 'thisreallyshouldnotbemysecretkey';
+opts.secretOrKey = process.env.UNIQUE_KEY;
+//opts.secretOrKey = 'thisreallyshouldnotbemysecretkey';
 
 passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
         var user = db.find(jwt_payload.id);

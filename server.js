@@ -66,8 +66,6 @@ router.route('/postjwt')
 
 router.route('/signup')
     .post((req, res) => {
-    console.log('signup started');
-    console.log(req.route.method);
 
         if (!req.body.username || !req.body.password) {
             res.json(
@@ -101,7 +99,7 @@ router.route('/signup')
 
 router.route('/signin')
     .post((req, res) => {
-
+    console.log(process.env.UNIQUE_KEY);
         var user = db.findOne(req.body.username);
 
         if (!user) {
@@ -115,7 +113,7 @@ router.route('/signin')
             // check if password matches
             if (req.body.password == user.password)  {
                 var userToken = { id : user.id, username: user.username };
-                var token = jwt.sign(userToken, process.env.SECRET_KEY);
+                var token = jwt.sign(userToken, process.env.UNIQUE_KEY);
                 res.json({success: true, token: 'JWT ' + token});
             }
             else {
@@ -139,8 +137,6 @@ router.route('/signin')
 
 router.route('/movies')
     .get((req, res) => {
-
-
         res.set(req.headers);
         res.status(200);
         res.query = req.query;
@@ -156,9 +152,40 @@ router.route('/movies')
     })
     .post((req, res) => {
 
+        res.set(req.headers);
+        res.status(200);
+        res.query = req.query;
+        res = res.json(
+            {
+                status: 200,
+                env: process.env.UNIQUE_KEY,
+                message: 'Movie Saved',
+                query: req.query,
+                headers: req.headers
+            }).send();
+
     })
 
-    .put((req, res) => {
+    .put(authJwtController.isAuthenticated, (req, res) => {
+        res = res.status(200);
+        res.send(req.body);
+        // res.set(req.headers);
+        // res.status(200);
+        // res.query = req.query;
+        // res = res.json(
+        //     {
+        //         status: 200,
+        //         env: process.env.UNIQUE_KEY,
+        //         message: 'GET movies',
+        //         query: req.query,
+        //         headers: req.headers
+        //     }).send();
+        //
+
+        // res.json({
+        //     msg: 'success'
+        // }).send();
+
 
     })
 
