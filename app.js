@@ -27,19 +27,48 @@ router.route('/post')
     });
 
 
-app.post('/signup', function(req, res) {
+router.route('/post')
+    .post(authController.isAuthenticated, function (req, res) {
+            console.log(req.body);
+            res = res.status(200);
+            if (req.get('Content-Type')) {
+                console.log("Content-Type: " + req.get('Content-Type'));
+                res = res.type(req.get('Content-Type'));
+            }
+            var o = getJSONObject(req);
+            res.json(o);
+        }
+    );
 
-    if(!req.body.username || !req.body.password) {
-        res.json({success: false, msg: 'Please pass username and password'})
-    } else {
-        let newUser = {
-            username: req.body.username,
-            password: req.body.password
+
+
+
+
+router.post('/signup', function(req, res) {
+    console.log('signup started');
+    console.log(req.route.method);
+    if (req.route.method === 'post') {
+
+
+        if (!req.body.username || !req.body.password) {
+            res.json({success: false, msg: 'Please pass username and password.'});
+        } else {
+            var newUser = {
+                username: req.body.username,
+                password: req.body.password
+            };
+            // save the user
+            db.save(newUser); //no duplicate checking
+            res.json({success: true, msg: 'Successfully created new user.'});
+
         };
-        // Save the user
-        db.save(newUser); // no doup checking
-        res.json({success: true, msg: 'Successfully created new user'});
+
+    } else {
+
+        res.send(405, 'Method Not Allowed');
     }
+
+
 });
 
 router.post('/signin', function (req, res) {
