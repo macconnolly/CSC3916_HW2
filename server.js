@@ -38,53 +38,26 @@ function getJSONObject(req) {
 
 router.route('/')
     .all((req, res) => {
-            res.status(403);
+            res.status(401);
             res.json({
                 Error: 'Forbidden',
-                Message: 'Access to this resource is not allowed.'
+                Message: 'No resources exist at this endpoint.'
             }).send();
         }
 
     );
 
-router.route('/post')
-     .post(authJwtController.isAuthenticated, (req, res) => {
-            console.log(req.body);
-            res = res.status(200);
-            if (req.get('Content-Type')) {
-                console.log("Content-Type: " + req.get('Content-Type'));
-                res = res.type(req.get('Content-Type'));
-            }
-            var o = getJSONObject(req);
-            res.json(o);
-        }
-
-    );
-
-router.route('/postjwt')
-    .post(authJwtController.isAuthenticated, (req, res) => {
-            // console.log(req.body);
-            res = res.status(200);
-            if (req.get('Content-Type')) {
-                console.log("Content-Type: " + req.get('Content-Type'));
-                res = res.type(req.get('Content-Type'));
-            }
-            res.send(req.body);
-        }
-
-    )
-
-
-
 router.route('/signup')
     .post((req, res) => {
 
         if (!req.body.username || !req.body.password) {
+            res.status(422);
             res.json(
                 {
                     success: false,
                     msg: 'Please pass username and password.'
-                });
+
+                }).send();
         } else {
             var newUser = {
                 username: req.body.username,
@@ -92,10 +65,13 @@ router.route('/signup')
             };
             // save the user
             db.save(newUser); //no duplicate checking
+            res.status(201);
             res.json(
                 {
                     success: true,
-                    msg: 'Successfully created new user.'});
+                    msg: 'Successfully created new user.'
+
+                }).send();
             }
     })
 
@@ -155,7 +131,7 @@ router.route('/movies')
         res = res.json(
             {
                 env: process.env.UNIQUE_KEY,
-                message: 'GET movies',
+                message: 'get movies',
                 query: req.query,
                 headers: req.headers
             }).send();
@@ -169,7 +145,7 @@ router.route('/movies')
         res = res.json(
             {
                 env: process.env.UNIQUE_KEY,
-                message: 'Movie Saved',
+                message: 'movie Saved',
                 query: req.query,
                 headers: req.headers
             }).send();
@@ -185,7 +161,7 @@ router.route('/movies')
         res = res.json(
             {
                 env: process.env.UNIQUE_KEY,
-                message: 'GET movies',
+                message: 'movie updated',
                 query: req.query,
                 headers: req.headers
             }).send();
@@ -214,6 +190,34 @@ router.route('/movies')
                 Message: 'Unsupported HTTP Method'
             }).send();
     });
+
+// router.route('/post')
+//      .post(authJwtController.isAuthenticated, (req, res) => {
+//             console.log(req.body);
+//             res = res.status(200);
+//             if (req.get('Content-Type')) {
+//                 console.log("Content-Type: " + req.get('Content-Type'));
+//                 res = res.type(req.get('Content-Type'));
+//             }
+//             var o = getJSONObject(req);
+//             res.json(o);
+//         }
+//
+//     );
+
+// router.route('/postjwt')
+//     .post(authJwtController.isAuthenticated, (req, res) => {
+//             // console.log(req.body);
+//             res = res.status(200);
+//             if (req.get('Content-Type')) {
+//                 console.log("Content-Type: " + req.get('Content-Type'));
+//                 res = res.type(req.get('Content-Type'));
+//             }
+//             res.send(req.body);
+//         }
+//
+//     )
+
 
 
 
