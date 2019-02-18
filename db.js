@@ -23,8 +23,7 @@ module.exports = function () {
                 return this.userList.find(function (element) {
                     return element.id === id;
                 });
-            }
-            else {
+            } else {
                 return this.userList;
             }
         },
@@ -33,8 +32,7 @@ module.exports = function () {
                 return this.userList.find(function (element) {
                     return element.username === name;
                 });
-            }
-            else {
+            } else {
                 return this.userList;
             }
         },
@@ -46,8 +44,7 @@ module.exports = function () {
             this.userList = this.userList.filter(function (element) {
                 if (element.id === id) {
                     found = 1;
-                }
-                else {
+                } else {
                     return element.id !== id;
                 }
             });
@@ -64,8 +61,7 @@ module.exports = function () {
                 this.userList[userIndex].username = user.username;
                 this.userList[userIndex].password = user.password;
                 return 1;
-            }
-            else {
+            } else {
                 return 0;
             }
         }
